@@ -2,10 +2,10 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteAll = exports.testingRouter = void 0;
 const express_1 = require("express");
-const app_1 = require("../app");
+const testing_repositories_1 = require("../repositories/testing-repositories");
 exports.testingRouter = (0, express_1.Router)({});
 const deleteAll = (req, res) => {
-    app_1.db.videos.splice(0, app_1.db.videos.length);
+    testing_repositories_1.testingRepositories.deleteAllVideo();
     res.sendStatus(204);
 };
 exports.deleteAll = deleteAll;

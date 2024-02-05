@@ -12,7 +12,7 @@ export const getVideos = (req: Request<ParamsType, any, ReqBodyType, QueryType>,
 
     res
         .status(200)
-        .send(db.videos);
+        .send(videosRepositories.getAllVideo());
 
 }
 export const getVideosWithID = (req: Request<ParamsType, any, ReqBodyType, QueryType>, res: Response<VideoType>) => {
@@ -34,18 +34,11 @@ export const getVideosWithID = (req: Request<ParamsType, any, ReqBodyType, Query
 }
 export const deleteVideo = (req: Request<ParamsType, any, ReqBodyType, QueryType>, res: Response<VideoType>) => {
 
-    if(!req.params.id) {
-        res.sendStatus(404);
+    if (videosRepositories.deleteVideo(req.params.id)) {
+        res.sendStatus(204);
         return;
     }
 
-    for(let i=0; i < db.videos.length; i++) {
-        if (db.videos[i].id === +req.params.id) {
-            db.videos.splice(i, 1);
-            res.sendStatus(204);
-            return;
-        }
-    }
     res.sendStatus(404);
 
 }
@@ -92,18 +85,9 @@ export const putVideos = (req: Request<ParamsType, any, VideoType, QueryType>, r
         return;
     }
 
-    let foundVideo = db.videos.find(a => a.id === +req.params.id);
-
     let errorsMessages: TypeErrors = {
         errorsMessages: []
     };
-
-    // check id
-    if(!foundVideo) {
-        errorsMessages.errorsMessages.push({message:'Not found video', field:'id'})
-        res.status(404).json(errorsMessages);
-        return;
-    }
 
     // check title
     if (!req.body.title) {
@@ -156,14 +140,16 @@ export const putVideos = (req: Request<ParamsType, any, VideoType, QueryType>, r
         return;
     }
 
-    if(foundVideo) {
-        foundVideo.title = req.body.title;
-        foundVideo.author = req.body.author;
-        foundVideo.availableResolutions = req.body.availableResolutions ?? [];
-        foundVideo.canBeDownloaded = req.body.canBeDownloaded;
-        foundVideo.minAgeRestriction = minAgeRestriction;
-        foundVideo.publicationDate = req.body.publicationDate;
-    }
+    // const foundVideo = db.videos.find(a => a.id === +req.params.id);
+
+    const foundVideo = videosRepositories.updateVideo(+req.params.id,req.body.title, req.body.author,
+        req.body.availableResolutions, req.body.canBeDownloaded, minAgeRestriction, req.body.publicationDate)
+
+     if(!foundVideo) {
+         errorsMessages.errorsMessages.push({message:'Not found video', field:'id'})
+         res.status(404).json(errorsMessages);
+         return;
+     }
 
     res.status(204).json(foundVideo);
 

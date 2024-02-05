@@ -24,5 +24,34 @@ exports.videosRepositories = {
         };
         exports.db.videos.push(createdVideo);
         return createdVideo;
+    },
+    getAllVideo() {
+        return exports.db.videos;
+    },
+    deleteVideo(id) {
+        if (!id) {
+            return false;
+        }
+        for (let i = 0; i < exports.db.videos.length; i++) {
+            if (exports.db.videos[i].id === +id) {
+                exports.db.videos.splice(i, 1);
+                return true;
+            }
+        }
+        return false;
+    },
+    updateVideo(id, title, author, availableResolutions, canBeDownloaded, minAgeRestriction, publicationDate) {
+        let foundVideo = this.findVideos(id);
+        if (!foundVideo) {
+            return foundVideo;
+        }
+        ;
+        foundVideo.title = title;
+        foundVideo.author = author;
+        foundVideo.availableResolutions = availableResolutions !== null && availableResolutions !== void 0 ? availableResolutions : [];
+        foundVideo.canBeDownloaded = canBeDownloaded;
+        foundVideo.minAgeRestriction = minAgeRestriction;
+        foundVideo.publicationDate = publicationDate;
+        return foundVideo;
     }
 };
