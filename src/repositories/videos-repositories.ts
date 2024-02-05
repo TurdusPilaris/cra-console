@@ -1,4 +1,4 @@
-import {Ava1, createDB, VideoType} from '../db'
+import {createDB, VideoType} from '../db'
 export const db = createDB()
 export const videosRepositories = {
 
